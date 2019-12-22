@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+import { useSelector, useDispatch } from 'react-redux';
+
 import { Button } from 'antd';
+import { postsGet } from 'actions/postsActions';
 
 function App() {
+  const dispatch = useDispatch();
+  const postsStore = useSelector(state => state.postsStore);
+
+  useEffect(() => {
+    if (!postsStore.isInit) {
+      dispatch(postsGet());
+    }
+  }, [dispatch, postsStore.isInit]);
+
   return (
     <div className="App">
       <header className="App-header">
