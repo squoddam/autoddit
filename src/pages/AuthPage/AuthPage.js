@@ -10,8 +10,8 @@ const AuthPage = () => {
   const dispatch = useDispatch();
 
   const handleSubmit = useCallback(
-    values => {
-      dispatch(userAuth(values.name));
+    name => {
+      dispatch(userAuth(name));
     },
     [dispatch]
   );
