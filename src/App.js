@@ -10,6 +10,8 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { postsGet } from 'actions/postsActions';
 import { Feed, AddPostPage } from 'pages';
+import AuthPage from 'pages/AuthPage/AuthPage';
+import AuthCheck from 'components/AuthCheck';
 
 function App() {
   const dispatch = useDispatch();
@@ -23,13 +25,17 @@ function App() {
 
   return (
     <Router>
-      <Switch>
-        <Route exact path="/" component={Feed} />
+      <AuthCheck>
+        <Switch>
+          <Route exact path="/" component={Feed} />
 
-        <Route exact path="/new" component={AddPostPage} />
+          <Route exact path="/new" component={AddPostPage} />
 
-        <Redirect to="/" />
-      </Switch>
+          <Route exact path="/auth" component={AuthPage} />
+
+          <Redirect to="/" />
+        </Switch>
+      </AuthCheck>
     </Router>
   );
 }
