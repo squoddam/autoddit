@@ -9,9 +9,8 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 
 import { postsGet } from 'actions/postsActions';
-import { Feed, AddPostPage } from 'pages';
-import AuthPage from 'pages/AuthPage/AuthPage';
-import AuthCheck from 'components/AuthCheck';
+import { AuthPage, Feed, AddPostPage } from 'pages';
+import { AuthCheck } from 'components';
 
 function App() {
   const dispatch = useDispatch();
