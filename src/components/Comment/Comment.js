@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 
 import styles from './Comment.module.css';
 import dayjs from 'dayjs';

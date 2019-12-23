@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 import styles from './Post.module.css';
 import { Icon, Avatar, Button } from 'antd';
 import Title from 'antd/lib/typography/Title';
+import { Voter } from 'components';
 
 const getAvatarProps = ({ imageSrc }) =>
   imageSrc
@@ -14,7 +15,14 @@ const getAvatarProps = ({ imageSrc }) =>
         icon: <Icon type="link" />
       };
 
-const Post = ({ post, onScoreChange, onAddComment }) => {
+const Post = ({
+  post,
+  prevVote,
+  ownsItem,
+  onScoreChange,
+  onToggleComments,
+  onAddComment
+}) => {
   const timeString = useMemo(
     () => dayjs(post.createdAt).format('MMM DD, YYYY HH:MM'),
     [post.createdAt]
@@ -22,13 +30,13 @@ const Post = ({ post, onScoreChange, onAddComment }) => {
 
   return (
     <div className={styles.post}>
-      <div className={styles.score}>
-        <Icon type="caret-up" onClick={onScoreChange(post.id, 1)} />
-        <div className={post.score < 0 ? styles.postNegativeScore : ''}>
-          {post.score}
-        </div>
-        <Icon type="caret-down" onClick={onScoreChange(post.id, -1)} />
-      </div>
+      <Voter
+        prevVote={prevVote}
+        ownsItem={ownsItem}
+        className={styles.voter}
+        score={post.score}
+        onScoreChange={change => onScoreChange(change, post.id)}
+      />
       <div className={styles.image}>
         <Avatar {...getAvatarProps(post)} shape="square" size={68} />
       </div>
@@ -36,14 +44,21 @@ const Post = ({ post, onScoreChange, onAddComment }) => {
         <a target="_blank" href={post.url} rel="noopener noreferrer">
           <Title level={4}>{post.title}</Title>
         </a>
-        <div className={styles.createdAt}>{timeString}</div>
+        <div className={styles.createdAt}>
+          Submitted on {timeString} by <b>{post.createdBy}</b>
+        </div>
         <div className={styles.commentSection}>
-          <div className={styles.commentsCount}>
+          <Button
+            type="link"
+            disabled={post.commentsCount === 0}
+            className={styles.commentsCount}
+            onClick={() => onToggleComments(post.id)}
+          >
             {post.commentsCount} comments
-            <Button type="link" onClick={onAddComment(post.id)}>
-              Add comment
-            </Button>
-          </div>
+          </Button>
+          <Button type="link" onClick={onAddComment(post.id)}>
+            Add comment
+          </Button>
         </div>
       </div>
     </div>
@@ -51,4 +66,3 @@ const Post = ({ post, onScoreChange, onAddComment }) => {
 };
 
 export default Post;
-// Submitted on MMM dd, YYYY HH:MM
