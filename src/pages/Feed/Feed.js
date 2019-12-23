@@ -5,7 +5,7 @@ import styles from './Feed.module.css';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { userReset } from 'actions/userActions';
-import { postsVote } from 'actions/postsActions';
+import { postsVote, postsGet } from 'actions/postsActions';
 import { Post } from 'components';
 
 const Feed = () => {
@@ -19,6 +19,8 @@ const Feed = () => {
     },
     [dispatch]
   );
+
+  const handleLoadMore = useCallback(() => dispatch(postsGet()), [dispatch]);
 
   return (
     <Spin spinning={postsStore.isLoading}>
@@ -51,6 +53,14 @@ const Feed = () => {
             renderItem={post => (
               <Post post={post} onScoreChange={handleScoreChange} />
             )}
+            loadMore={
+              !postsStore.isLoading &&
+              !postsStore.isFull && (
+                <div className={styles.loadMoreContainer}>
+                  <Button onClick={handleLoadMore}>Load more</Button>
+                </div>
+              )
+            }
           />
         </Layout.Content>
       </Layout>

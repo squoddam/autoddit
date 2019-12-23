@@ -12,6 +12,7 @@ import createReducer from './createReducer';
 const initialState = {
   isLoading: false,
   isInit: false,
+  isFull: false,
   error: null,
   data: {
     posts: [],
@@ -26,7 +27,12 @@ const actionHandlers = {
   },
   [POSTS_GET_SUCCESS]: (state, { payload: posts }) => {
     state.isLoading = false;
-    state.data.posts = posts;
+
+    if (posts.length === 0) {
+      state.isFull = true;
+    } else {
+      state.data.posts = [...state.data.posts, ...posts];
+    }
   },
   [POSTS_GET_FAIL]: (state, { payload: error }) => {
     state.isLoading = false;

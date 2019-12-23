@@ -26,3 +26,8 @@
 .addBtnLink {
   margin-bottom: 16px;
 }
+
+.loadMoreContainer {
+  text-align: center;
+  padding-top: 16px;
+}
