@@ -134,20 +134,23 @@ const generateMock = () => {
 
       if (!window.store.comments[postId]) {
         window.store.comments[postId] = [comment];
-
-        return JSON.stringify(window.store.comments[postId]);
-      }
-
-      if (commentId) {
+      } else if (commentId) {
         const parent = window.store.comments[postId].find(
           c => c.id === commentId
         );
         parent.children.push(comment.id);
 
         comment.depth = parent.depth + 1;
-      }
 
-      window.store.comments[postId].push(comment);
+        const lastInThreadId = parent.children[parent.children.length - 1];
+        const indexToPlace = window.store.comments[postId].findIndex(
+          c => c.id === lastInThreadId
+        );
+
+        window.store.comments[postId].splice(indexToPlace, 0, comment);
+      } else {
+        window.store.comments[postId].push(comment);
+      }
 
       return JSON.stringify(window.store.comments[postId]);
     },
