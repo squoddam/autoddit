@@ -12,12 +12,14 @@ const autoSizeProps = {
   minRows: 5
 };
 
+const initialCommentState = {
+  value: '',
+  isTouched: false,
+  error: null
+};
+
 const AddCommentModal = ({ visible = false, onOk, onCancel }) => {
-  const [comment, setComment] = useState({
-    value: '',
-    isTouched: false,
-    error: null
-  });
+  const [comment, setComment] = useState(initialCommentState);
 
   const handleCommentChange = useCallback(e => {
     const { value } = e.target;
@@ -33,6 +35,12 @@ const AddCommentModal = ({ visible = false, onOk, onCancel }) => {
     );
   }, []);
 
+  const handleOkClick = useCallback(() => {
+    onOk(comment.value);
+
+    setComment(initialCommentState);
+  }, [comment.value, onOk]);
+
   const okButtonProps = useMemo(
     () => ({
       disabled: !comment.isTouched || comment.error
@@ -46,7 +54,7 @@ const AddCommentModal = ({ visible = false, onOk, onCancel }) => {
       title="Add comment"
       okText="Save"
       okButtonProps={okButtonProps}
-      onOk={() => onOk(comment.value)}
+      onOk={handleOkClick}
       onCancel={onCancel}
       closable={false}
     >
