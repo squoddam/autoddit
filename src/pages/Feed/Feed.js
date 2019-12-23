@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { Layout, Button, Dropdown, Menu, List, Spin } from 'antd';
+import React, { useCallback, useState } from 'react';
+import { Layout, Button, Dropdown, Menu, List, Spin, Modal } from 'antd';
 
 import styles from './Feed.module.css';
 import { Link } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { userReset } from 'actions/userActions';
 import { postsVote, postsGet } from 'actions/postsActions';
 import { Post } from 'components';
+import AddCommentModal from 'components/AddCommentModal/AddCommentModal';
 
 const Feed = () => {
   const dispatch = useDispatch();
@@ -19,6 +20,11 @@ const Feed = () => {
     },
     [dispatch]
   );
+
+  const [idForModal, setIdForModal] = useState(null);
+
+  const handleOpenModal = useCallback(id => () => setIdForModal(id), []);
+  const handleCloseModal = useCallback(() => setIdForModal(null), []);
 
   const handleLoadMore = useCallback(() => dispatch(postsGet()), [dispatch]);
 
@@ -51,7 +57,11 @@ const Feed = () => {
             itemLayout="horizontal"
             dataSource={postsStore.data.posts}
             renderItem={post => (
-              <Post post={post} onScoreChange={handleScoreChange} />
+              <Post
+                post={post}
+                onScoreChange={handleScoreChange}
+                onAddComment={handleOpenModal}
+              />
             )}
             loadMore={
               !postsStore.isLoading &&
@@ -64,6 +74,10 @@ const Feed = () => {
           />
         </Layout.Content>
       </Layout>
+      <AddCommentModal
+        visible={idForModal !== null}
+        onCancel={handleCloseModal}
+      />
     </Spin>
   );
 };

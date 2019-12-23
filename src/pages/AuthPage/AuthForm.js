@@ -4,22 +4,12 @@ import { Form, Input, Button } from 'antd';
 import styles from './AuthPage.module.css';
 import Title from 'antd/lib/typography/Title';
 import produce from 'immer';
+import { getValidationFunc, rules } from 'utils/validation';
 
-const rules = {
-  required: {
-    isFailed: v => v.length === 0,
-    message: 'Please, enter URL!'
-  },
-  max: maxLength => ({
-    isFailed: v => v.length > maxLength,
-    message: `Sorry, no names longer than ${maxLength} :\\`
-  })
-};
-
-const validateName = name =>
-  [rules.required, rules.max(12)].find(
-    rule => rule.isFailed(name) && rule.message
-  );
+const validateName = getValidationFunc([
+  rules.required(),
+  rules.max(12)(maxLength => `Sorry, no names longer than ${maxLength} :\\`)
+]);
 
 const AuthForm = ({ onSubmit }) => {
   const [name, setName] = useState({

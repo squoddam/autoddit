@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 import styles from './Post.module.css';
-import { Icon, Avatar } from 'antd';
+import { Icon, Avatar, Button } from 'antd';
 import Title from 'antd/lib/typography/Title';
 
 const getAvatarProps = ({ imageSrc }) =>
@@ -14,7 +14,7 @@ const getAvatarProps = ({ imageSrc }) =>
         icon: <Icon type="link" />
       };
 
-const Post = ({ post, onScoreChange }) => {
+const Post = ({ post, onScoreChange, onAddComment }) => {
   const timeString = useMemo(
     () => dayjs(post.createdAt).format('MMM DD, YYYY HH:MM'),
     [post.createdAt]
@@ -37,8 +37,13 @@ const Post = ({ post, onScoreChange }) => {
           <Title level={4}>{post.title}</Title>
         </a>
         <div className={styles.createdAt}>{timeString}</div>
-        <div className={styles.commentsCount}>
-          {post.commentsCount} comments
+        <div className={styles.commentSection}>
+          <div className={styles.commentsCount}>
+            {post.commentsCount} comments
+            <Button type="link" onClick={onAddComment(post.id)}>
+              Add comment
+            </Button>
+          </div>
         </div>
       </div>
     </div>
