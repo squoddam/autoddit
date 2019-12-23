@@ -12,7 +12,7 @@ const autoSizeProps = {
   minRows: 5
 };
 
-const AddCommentModal = ({ visible = false, onCancel }) => {
+const AddCommentModal = ({ visible = false, onOk, onCancel }) => {
   const [comment, setComment] = useState({
     value: '',
     isTouched: false,
@@ -46,6 +46,7 @@ const AddCommentModal = ({ visible = false, onCancel }) => {
       title="Add comment"
       okText="Save"
       okButtonProps={okButtonProps}
+      onOk={() => onOk(comment.value)}
       onCancel={onCancel}
       closable={false}
     >
