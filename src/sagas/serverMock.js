@@ -12,6 +12,17 @@ const createPost = (details, user) => ({
   ...details
 });
 
+const createComment = (postId, commentId, content, user) => ({
+  id: uuidv1(),
+  createdAt: Date.now(),
+  createdBy: user,
+  postId,
+  parentId: commentId || postId,
+  children: [],
+  depth: 0,
+  content
+});
+
 const postMock = i =>
   i % 2 === 0
     ? {
@@ -73,6 +84,37 @@ const generateMock = () => {
       window.store.posts[postIndex].score += change;
 
       return;
+    },
+    postsCommentAdd: function*(postId, commentId, commentContent) {
+      const userStore = yield select(state => state.userStore);
+
+      yield delay();
+
+      const comment = createComment(
+        postId,
+        commentId,
+        commentContent,
+        userStore.name
+      );
+
+      if (!window.store.comments[postId]) {
+        window.store.comments[postId] = [comment];
+
+        return JSON.stringify(window.store.comments[postId]);
+      }
+
+      if (commentId) {
+        const parent = window.store.comments[postId].find(
+          c => c.id === commentId
+        );
+        parent.children.push(comment.id);
+
+        comment.depth = parent.depth + 1;
+      }
+
+      window.store.comments[postId].push(comment);
+
+      return JSON.stringify(window.store.comments[postId]);
     }
   };
 };

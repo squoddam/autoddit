@@ -9,7 +9,10 @@ import {
   POSTS_ADD,
   postsVoteSuccess,
   postsVoteFail,
-  POSTS_VOTE
+  POSTS_VOTE,
+  POSTS_COMMENT_ADD,
+  postsCommentAddSuccess,
+  postsCommentAddFail
 } from 'actions/postsActions';
 
 function* postsGet({ payload: get = 5 }) {
@@ -46,10 +49,21 @@ function* postsVote({ payload: { id, change } }) {
   }
 }
 
+function* postsCommentAdd({ payload: { postId, commentId = null, comment } }) {
+  try {
+    const comments = yield mock.postsCommentAdd(postId, commentId, comment);
+
+    yield put(postsCommentAddSuccess(postId, JSON.parse(comments)));
+  } catch (err) {
+    put(postsCommentAddFail(err));
+  }
+}
+
 function* postsSaga() {
   yield takeLatest(POSTS_GET, postsGet);
   yield takeLatest(POSTS_ADD, postsAdd);
   yield takeLatest(POSTS_VOTE, postsVote);
+  yield takeLatest(POSTS_COMMENT_ADD, postsCommentAdd);
 }
 
 export default postsSaga;

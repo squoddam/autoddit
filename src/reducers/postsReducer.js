@@ -5,7 +5,10 @@ import {
   POSTS_ADD,
   POSTS_ADD_SUCCESS,
   POSTS_ADD_FAIL,
-  POSTS_VOTE
+  POSTS_VOTE,
+  POSTS_COMMENT_ADD,
+  POSTS_COMMENT_ADD_FAIL,
+  POSTS_COMMENT_ADD_SUCCESS
 } from 'actions/postsActions';
 import createReducer from './createReducer';
 
@@ -51,6 +54,19 @@ const actionHandlers = {
   },
   [POSTS_VOTE]: (state, { payload: { id, change = 0 } }) => {
     state.data.posts.find(p => p.id === id).score += change;
+  },
+  [POSTS_COMMENT_ADD]: (state, { payload: { postId } }) => {
+    if (!state.data.comments[postId]) state.data.comments[postId] = [];
+
+    state.isLoading = true;
+  },
+  [POSTS_COMMENT_ADD_SUCCESS]: (state, { payload: { postId, comments } }) => {
+    state.isLoading = false;
+    state.data.comments[postId] = comments;
+  },
+  [POSTS_COMMENT_ADD_FAIL]: (state, { payload: error }) => {
+    state.isLoading = false;
+    state.error = error;
   }
 };
 
