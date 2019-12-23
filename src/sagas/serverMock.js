@@ -1,5 +1,6 @@
 import uuidv1 from 'uuid/v1';
 import { select } from 'redux-saga/effects';
+import produce from 'immer';
 
 const delay = (ms = 1000) => new Promise(res => setTimeout(res, ms));
 
@@ -64,6 +65,17 @@ const generateMock = () => {
       store.posts = [post, ...store.posts];
 
       return store.posts;
+    },
+    postsVote: function*(id, change = 0) {
+      yield delay();
+
+      const postIndex = store.posts.findIndex(p => p.id === id);
+
+      store.posts[postIndex] = produce(store.posts[postIndex], draft => {
+        draft.score += change;
+      });
+
+      yield 1;
     }
   };
 };

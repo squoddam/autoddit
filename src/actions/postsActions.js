@@ -4,6 +4,9 @@ export const POSTS_GET_FAIL = 'POSTS_GET_FAIL';
 export const POSTS_ADD = 'POSTS_ADD';
 export const POSTS_ADD_SUCCESS = 'POSTS_ADD_SUCCESS';
 export const POSTS_ADD_FAIL = 'POSTS_ADD_FAIL';
+export const POSTS_VOTE = 'POSTS_VOTE';
+export const POSTS_VOTE_SUCCESS = 'POSTS_VOTE_SUCCESS';
+export const POSTS_VOTE_FAIL = 'POSTS_VOTE_FAIL';
 
 export const postsGet = () => ({
   type: POSTS_GET
@@ -31,5 +34,19 @@ export const postsAddSuccess = posts => ({
 
 export const postsAddFail = err => ({
   type: POSTS_ADD_FAIL,
+  payload: err
+});
+
+export const postsVote = (id, change) => ({
+  type: POSTS_VOTE,
+  payload: { id, change }
+});
+
+export const postsVoteSuccess = () => ({
+  type: POSTS_VOTE_SUCCESS
+});
+
+export const postsVoteFail = err => ({
+  type: POSTS_VOTE_FAIL,
   payload: err
 });

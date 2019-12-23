@@ -4,7 +4,8 @@ import {
   POSTS_GET_FAIL,
   POSTS_ADD,
   POSTS_ADD_SUCCESS,
-  POSTS_ADD_FAIL
+  POSTS_ADD_FAIL,
+  POSTS_VOTE
 } from 'actions/postsActions';
 import createReducer from './createReducer';
 
@@ -41,6 +42,9 @@ const actionHandlers = {
   [POSTS_ADD_FAIL]: (state, { payload: error }) => {
     state.isLoading = false;
     state.error = error;
+  },
+  [POSTS_VOTE]: (state, { payload: { id, change = 0 } }) => {
+    state.data.posts.find(p => p.id === id).score += change;
   }
 };
 

@@ -1,11 +1,12 @@
-import React from 'react';
-import { Layout, Button, Dropdown, Menu, List, Avatar, Spin } from 'antd';
+import React, { useCallback } from 'react';
+import { Layout, Button, Dropdown, Menu, List, Avatar, Spin, Icon } from 'antd';
 
 import styles from './Feed.module.css';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { userReset } from 'actions/userActions';
 import Title from 'antd/lib/typography/Title';
+import { postsVote } from 'actions/postsActions';
 
 const getAvatarProps = ({ imageSrc }) =>
   imageSrc
@@ -13,13 +14,20 @@ const getAvatarProps = ({ imageSrc }) =>
         src: imageSrc
       }
     : {
-        type: 'link'
+        icon: <Icon type="link" />
       };
 
 const Feed = () => {
   const dispatch = useDispatch();
   const userStore = useSelector(state => state.userStore);
   const postsStore = useSelector(state => state.postsStore);
+
+  const handleChangeVote = useCallback(
+    (id, change) => () => {
+      dispatch(postsVote(id, change));
+    },
+    [dispatch]
+  );
 
   return (
     <Spin spinning={postsStore.isLoading}>
@@ -51,7 +59,17 @@ const Feed = () => {
             dataSource={postsStore.data.posts}
             renderItem={item => (
               <div className={styles.item}>
-                <div className={styles.score}></div>
+                <div className={styles.score}>
+                  <Icon
+                    type="caret-up"
+                    onClick={handleChangeVote(item.id, 1)}
+                  />
+                  <div className={styles.scoreNum}>{item.score}</div>
+                  <Icon
+                    type="caret-down"
+                    onClick={handleChangeVote(item.id, -1)}
+                  />
+                </div>
                 <div className={styles.image}>
                   <Avatar {...getAvatarProps(item)} shape="square" size={68} />
                 </div>
