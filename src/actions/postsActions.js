@@ -10,6 +10,9 @@ export const POSTS_VOTE_FAIL = 'POSTS_VOTE_FAIL';
 export const POSTS_COMMENT_ADD = 'POSTS_COMMENT_ADD';
 export const POSTS_COMMENT_ADD_SUCCESS = 'POSTS_COMMENT_ADD_SUCCESS';
 export const POSTS_COMMENT_ADD_FAIL = 'POSTS_COMMENT_ADD_FAIL';
+export const POSTS_COMMENT_GET = 'POSTS_COMMENT_GET';
+export const POSTS_COMMENT_GET_SUCCESS = 'POSTS_COMMENT_GET_SUCCESS';
+export const POSTS_COMMENT_GET_FAIL = 'POSTS_COMMENT_GET_FAIL';
 
 export const postsGet = () => ({
   type: POSTS_GET
@@ -40,9 +43,9 @@ export const postsAddFail = err => ({
   payload: err
 });
 
-export const postsVote = (id, change) => ({
+export const postsVote = (change, postId, commentId = null) => ({
   type: POSTS_VOTE,
-  payload: { id, change }
+  payload: { change, postId, commentId }
 });
 
 export const postsVoteSuccess = () => ({
@@ -66,5 +69,20 @@ export const postsCommentAddSuccess = (postId, comments) => ({
 
 export const postsCommentAddFail = err => ({
   type: POSTS_COMMENT_ADD_FAIL,
+  payload: err
+});
+
+export const postsCommentGet = postId => ({
+  type: POSTS_COMMENT_GET,
+  payload: postId
+});
+
+export const postsCommentGetSuccess = (postId, comments) => ({
+  type: POSTS_COMMENT_GET_SUCCESS,
+  payload: { postId, comments }
+});
+
+export const postsCommentGetFail = err => ({
+  type: POSTS_COMMENT_GET_FAIL,
   payload: err
 });
