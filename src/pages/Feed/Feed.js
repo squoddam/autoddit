@@ -1,28 +1,19 @@
 import React, { useCallback } from 'react';
-import { Layout, Button, Dropdown, Menu, List, Avatar, Spin, Icon } from 'antd';
+import { Layout, Button, Dropdown, Menu, List, Spin } from 'antd';
 
 import styles from './Feed.module.css';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { userReset } from 'actions/userActions';
-import Title from 'antd/lib/typography/Title';
 import { postsVote } from 'actions/postsActions';
-
-const getAvatarProps = ({ imageSrc }) =>
-  imageSrc
-    ? {
-        src: imageSrc
-      }
-    : {
-        icon: <Icon type="link" />
-      };
+import { Post } from 'components';
 
 const Feed = () => {
   const dispatch = useDispatch();
   const userStore = useSelector(state => state.userStore);
   const postsStore = useSelector(state => state.postsStore);
 
-  const handleChangeVote = useCallback(
+  const handleScoreChange = useCallback(
     (id, change) => () => {
       dispatch(postsVote(id, change));
     },
@@ -57,34 +48,8 @@ const Feed = () => {
           <List
             itemLayout="horizontal"
             dataSource={postsStore.data.posts}
-            renderItem={item => (
-              <div className={styles.item}>
-                <div className={styles.score}>
-                  <Icon
-                    type="caret-up"
-                    onClick={handleChangeVote(item.id, 1)}
-                  />
-                  <div className={styles.scoreNum}>{item.score}</div>
-                  <Icon
-                    type="caret-down"
-                    onClick={handleChangeVote(item.id, -1)}
-                  />
-                </div>
-                <div className={styles.image}>
-                  <Avatar {...getAvatarProps(item)} shape="square" size={68} />
-                </div>
-                <div className={styles.itemContentContainer}>
-                  <a target="_blank" href={item.url} rel="noopener noreferrer">
-                    <Title level={4} className={styles.title}>
-                      {item.title}
-                    </Title>
-                  </a>
-                  <div className={styles.createdAt}>{item.createdAt}</div>
-                  <div className={styles.commentsCount}>
-                    {item.commentsCount} comments
-                  </div>
-                </div>
-              </div>
+            renderItem={post => (
+              <Post post={post} onScoreChange={handleScoreChange} />
             )}
           />
         </Layout.Content>

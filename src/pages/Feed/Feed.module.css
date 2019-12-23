@@ -2,6 +2,8 @@
   width: 100vw;
   min-height: 100vh;
   height: 100%;
+  box-sizing: border-box;
+  padding: 32px;
 }
 .header {
   background: unset;
@@ -23,45 +25,4 @@
 
 .addBtnLink {
   margin-bottom: 16px;
-}
-
-/* Item */
-
-.item {
-  display: flex;
-  box-sizing: border-box;
-  height: 100px;
-  width: 600px;
-  padding: 16px 0;
-  border-bottom: 1px solid;
-}
-.score,
-.image {
-  flex: 1;
-  margin-right: 8px;
-}
-
-.score {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 20px;
-}
-
-.score i {
-  cursor: pointer;
-}
-
-.scoreNum {
-}
-
-.itemContentContainer {
-  flex: 5;
-
-  display: flex;
-  flex-direction: column;
-}
-
-.itemTitle {
 }

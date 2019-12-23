@@ -21,7 +21,7 @@ const createPost = (details, user) => ({
 const postMock = i =>
   i % 2 === 0
     ? {
-        createdAt: 1577089580564 + i * 1000 * 60,
+        createdAt: 1577089580564 + i * 1000 * 60 * 60,
         createdBy: 'querty',
         commentsCount: 0,
         score: 0,
@@ -31,7 +31,7 @@ const postMock = i =>
         title: 'RFC4122 (v1, v4, and v5) UUIDs'
       }
     : {
-        createdAt: 1577090645818 + i * 1000 * 60,
+        createdAt: 1577090645818 + i * 1000 * 60 * 60,
         createdBy: 'querty',
         commentsCount: 0,
         score: 0,
