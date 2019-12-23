@@ -119,7 +119,7 @@ const AddPostForm = ({ onSubmit, onCancel }) => {
   );
 
   const handleSubmit = useCallback(() => {
-    onSubmit({ url, ...meta });
+    onSubmit({ url: url.value, imageSrc: meta.imageSrc, title: meta.title });
   }, [meta, onSubmit, url]);
 
   return (

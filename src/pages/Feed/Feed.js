@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Button, Dropdown, Menu } from 'antd';
+import { Layout, Button, Dropdown, Menu, List } from 'antd';
 
 import styles from './Feed.module.css';
 import { Link } from 'react-router-dom';
@@ -10,6 +10,7 @@ import { userReset } from 'actions/userActions';
 const Feed = () => {
   const dispatch = useDispatch();
   const userStore = useSelector(state => state.userStore);
+  const postsStore = useSelector(state => state.postsStore);
 
   return (
     <Layout className={styles.layout}>
@@ -33,6 +34,11 @@ const Feed = () => {
         <Link to="new">
           <Button type="primary">Add</Button>
         </Link>
+        <List
+          itemLayout="horizontal"
+          dataSource={postsStore.data.posts}
+          renderItem={item => <div>{item.title}</div>}
+        />
       </Layout.Content>
     </Layout>
   );

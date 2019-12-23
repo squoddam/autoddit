@@ -12,7 +12,10 @@ const initialState = {
   isLoading: false,
   isInit: false,
   error: null,
-  data: []
+  data: {
+    posts: [],
+    comments: {}
+  }
 };
 
 const actionHandlers = {
@@ -22,7 +25,7 @@ const actionHandlers = {
   },
   [POSTS_GET_SUCCESS]: (state, { payload: posts }) => {
     state.isLoading = false;
-    state.data = posts;
+    state.data.posts = posts;
   },
   [POSTS_GET_FAIL]: (state, { payload: error }) => {
     state.isLoading = false;
@@ -33,7 +36,7 @@ const actionHandlers = {
   },
   [POSTS_ADD_SUCCESS]: (state, { payload: posts }) => {
     state.isLoading = false;
-    state.data = posts;
+    state.data.posts = posts;
   },
   [POSTS_ADD_FAIL]: (state, { payload: error }) => {
     state.isLoading = false;
