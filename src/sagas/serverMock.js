@@ -1,13 +1,7 @@
 import uuidv1 from 'uuid/v1';
 import { select } from 'redux-saga/effects';
-import produce from 'immer';
 
 const delay = (ms = 1000) => new Promise(res => setTimeout(res, ms));
-
-const withDelay = (cb, delay = 1000) => (...args) =>
-  new Promise(res => {
-    setTimeout(() => res(cb(...args)), delay);
-  });
 
 const createPost = (details, user) => ({
   id: uuidv1(),
@@ -21,7 +15,7 @@ const createPost = (details, user) => ({
 const postMock = i =>
   i % 2 === 0
     ? {
-        createdAt: 1577089580564 + i * 1000 * 60 * 60,
+        createdAt: 1577089580564 - i * 1000 * 60 * 60,
         createdBy: 'querty',
         commentsCount: 0,
         score: 0,
@@ -31,7 +25,7 @@ const postMock = i =>
         title: 'RFC4122 (v1, v4, and v5) UUIDs'
       }
     : {
-        createdAt: 1577090645818 + i * 1000 * 60 * 60,
+        createdAt: 1577090645818 - i * 1000 * 60 * 60,
         createdBy: 'querty',
         commentsCount: 0,
         score: 0,
@@ -41,20 +35,26 @@ const postMock = i =>
         title: 'Happy Holidays 2019! #GoogleDoodle'
       };
 
+const getWithSkip = (posts, skip = 0, get = 5) => posts.slice(skip, skip + get);
+
 const generateMock = () => {
-  const store = {
+  window.store = {
     posts: [],
     comments: {}
   };
 
   // !dev
-  store.posts = Array(12)
+  window.store.posts = Array(12)
     .fill(null)
     .map((_, i) => createPost(postMock(i)));
   // !dev
 
   return {
-    postsGetMock: withDelay(() => store.posts),
+    postsGetMock: function*(skip = 0, get = 5) {
+      yield delay();
+
+      return JSON.stringify(getWithSkip(window.store.posts, skip, get));
+    },
     postsAddMock: function*(postDetails) {
       const userStore = yield select(state => state.userStore);
 
@@ -62,20 +62,17 @@ const generateMock = () => {
 
       const post = createPost(postDetails, userStore.name);
 
-      store.posts = [post, ...store.posts];
+      window.store.posts = [post, ...window.store.posts];
 
-      return store.posts;
+      return JSON.stringify(getWithSkip(window.store.posts));
     },
     postsVote: function*(id, change = 0) {
       yield delay();
 
-      const postIndex = store.posts.findIndex(p => p.id === id);
+      const postIndex = window.store.posts.findIndex(p => p.id === id);
+      window.store.posts[postIndex].score += change;
 
-      store.posts[postIndex] = produce(store.posts[postIndex], draft => {
-        draft.score += change;
-      });
-
-      yield 1;
+      return;
     }
   };
 };

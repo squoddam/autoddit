@@ -1,4 +1,4 @@
-import { put, takeLatest } from 'redux-saga/effects';
+import { put, takeLatest, select } from 'redux-saga/effects';
 import mock from './serverMock';
 import {
   postsGetSuccess,
@@ -12,11 +12,15 @@ import {
   POSTS_VOTE
 } from 'actions/postsActions';
 
-function* postsGet() {
+function* postsGet({ payload: get = 5 }) {
   try {
-    const posts = yield mock.postsGetMock();
+    const postsStore = yield select(state => state.postsStore);
 
-    yield put(postsGetSuccess(posts));
+    const skip = postsStore.data.posts.length;
+
+    const posts = yield mock.postsGetMock(skip, get);
+
+    yield put(postsGetSuccess(JSON.parse(posts)));
   } catch (err) {
     yield put(postsGetFail(err));
   }
@@ -26,7 +30,7 @@ function* postsAdd(action) {
   try {
     const posts = yield mock.postsAddMock(action.payload);
 
-    yield put(postsAddSuccess(posts));
+    yield put(postsAddSuccess(JSON.parse(posts)));
   } catch (err) {
     yield put(postsAddFail(err));
   }
