@@ -1,8 +1,10 @@
 import { USER_AUTH, USER_RESET } from 'actions/userActions';
 import createReducer from './createReducer';
+import { POSTS_VOTE } from 'actions/postsActions';
 
 const initialState = {
-  name: 'querty'
+  name: 'not_querty',
+  voted: {}
 };
 
 const actionHandlers = {
@@ -11,6 +13,12 @@ const actionHandlers = {
   },
   [USER_RESET]: state => {
     state.name = null;
+  },
+  [POSTS_VOTE]: (state, { payload: { change, postId, commentId } }) => {
+    const idForVote = commentId || postId;
+
+    if (state.voted[idForVote]) state.voted[idForVote] = undefined;
+    else state.voted[idForVote] = change;
   }
 };
 

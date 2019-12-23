@@ -11,24 +11,12 @@ import { Form, Input, Icon, Avatar, Spin, Button } from 'antd';
 import styles from './AddPostForm.module.css';
 import produce from 'immer';
 import Title from 'antd/lib/typography/Title';
+import { rules, getValidationFunc } from 'utils/validation';
 
-const REGEX_URL = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
-
-const rules = {
-  required: {
-    isFailed: v => v.length === 0,
-    message: 'Please, enter URL!'
-  },
-  isUrl: {
-    isFailed: v => !REGEX_URL.test(v),
-    message: 'It should be a valid URL'
-  }
-};
-
-const validateUrl = url =>
-  [rules.required, rules.isUrl].find(
-    rule => rule.isFailed(url) && rule.message
-  );
+const validateUrl = getValidationFunc([
+  rules.required('Please, enter URL!'),
+  rules.isUrl()
+]);
 
 const AddPostForm = ({ onSubmit, onCancel }) => {
   const [url, setUrl] = useState({
@@ -144,6 +132,7 @@ const AddPostForm = ({ onSubmit, onCancel }) => {
               >
                 <Input
                   placeholder="Enter URL here..."
+                  value={url.value}
                   onChange={handleUrlChange}
                   disabled={meta.isLoading}
                 />
