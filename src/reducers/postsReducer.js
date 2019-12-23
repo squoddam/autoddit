@@ -4,15 +4,20 @@ import {
   POSTS_GET_FAIL,
   POSTS_ADD,
   POSTS_ADD_SUCCESS,
-  POSTS_ADD_FAIL
+  POSTS_ADD_FAIL,
+  POSTS_VOTE
 } from 'actions/postsActions';
 import createReducer from './createReducer';
 
 const initialState = {
   isLoading: false,
   isInit: false,
+  isFull: false,
   error: null,
-  data: []
+  data: {
+    posts: [],
+    comments: {}
+  }
 };
 
 const actionHandlers = {
@@ -22,7 +27,12 @@ const actionHandlers = {
   },
   [POSTS_GET_SUCCESS]: (state, { payload: posts }) => {
     state.isLoading = false;
-    state.data = posts;
+
+    if (posts.length === 0) {
+      state.isFull = true;
+    } else {
+      state.data.posts = [...state.data.posts, ...posts];
+    }
   },
   [POSTS_GET_FAIL]: (state, { payload: error }) => {
     state.isLoading = false;
@@ -33,11 +43,14 @@ const actionHandlers = {
   },
   [POSTS_ADD_SUCCESS]: (state, { payload: posts }) => {
     state.isLoading = false;
-    state.data = posts;
+    state.data.posts = posts;
   },
   [POSTS_ADD_FAIL]: (state, { payload: error }) => {
     state.isLoading = false;
     state.error = error;
+  },
+  [POSTS_VOTE]: (state, { payload: { id, change = 0 } }) => {
+    state.data.posts.find(p => p.id === id).score += change;
   }
 };
 

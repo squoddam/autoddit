@@ -12,7 +12,7 @@ import styles from './AddPostForm.module.css';
 import produce from 'immer';
 import Title from 'antd/lib/typography/Title';
 
-const REGEX_URL = /(?:www\.|(?!www)[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
+const REGEX_URL = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
 
 const rules = {
   required: {
@@ -119,7 +119,7 @@ const AddPostForm = ({ onSubmit, onCancel }) => {
   );
 
   const handleSubmit = useCallback(() => {
-    onSubmit({ url, ...meta });
+    onSubmit({ url: url.value, imageSrc: meta.imageSrc, title: meta.title });
   }, [meta, onSubmit, url]);
 
   return (
