@@ -70,6 +70,7 @@ const actionHandlers = {
   [POSTS_COMMENT_ADD_SUCCESS]: (state, { payload: { postId, comments } }) => {
     state.isLoading = false;
     state.data.comments[postId] = comments;
+    state.data.posts.find(p => p.id === postId).commentsCount = comments.length;
   },
   [POSTS_COMMENT_ADD_FAIL]: (state, { payload: error }) => {
     state.isLoading = false;

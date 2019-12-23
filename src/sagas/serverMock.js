@@ -130,6 +130,8 @@ const generateMock = () => {
         userStore.name
       );
 
+      window.store.posts.find(p => p.id === postId).commentsCount++;
+
       if (!window.store.comments[postId]) {
         window.store.comments[postId] = [comment];
 
