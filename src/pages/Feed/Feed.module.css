@@ -1,6 +1,7 @@
 .layout {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+  height: 100%;
 }
 .header {
   background: unset;
@@ -11,5 +12,41 @@
 
 .content {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.addBtn {
+  width: 200px;
+  font-size: larger;
+}
+
+.addBtnLink {
+  margin-bottom: 16px;
+}
+
+/* Item */
+
+.item {
+  display: flex;
+  box-sizing: border-box;
+  height: 100px;
+  width: 400px;
+  padding: 16px 0;
+  border-bottom: 1px solid;
+}
+.score,
+.image {
+  flex: 1;
+  margin-right: 8px;
+}
+
+.itemContentContainer {
+  flex: 5;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.itemTitle {
 }

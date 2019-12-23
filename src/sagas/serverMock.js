@@ -13,6 +13,7 @@ const createPost = (details, user) => ({
   createdAt: Date.now(),
   createdBy: user,
   commentsCount: 0,
+  score: 0,
   ...details
 });
 
@@ -22,16 +23,18 @@ const postMock = i =>
         createdAt: 1577089580564 + i * 1000 * 60,
         createdBy: 'querty',
         commentsCount: 0,
-        url: 'npmjs.com',
+        score: 0,
+        url: 'https://www.npmjs.com/package/uuid',
         imageSrc:
           'https://static.npmjs.com/338e4905a2684ca96e08c7780fc68412.png',
-        title: 'npmjs.com'
+        title: 'RFC4122 (v1, v4, and v5) UUIDs'
       }
     : {
         createdAt: 1577090645818 + i * 1000 * 60,
         createdBy: 'querty',
         commentsCount: 0,
-        url: 'google.com',
+        score: 0,
+        url: 'https://google.com',
         imageSrc:
           'https://www.google.com/logos/doodles/2019/happy-holidays-2019-day-1-6753651837108240-2xa.gif',
         title: 'Happy Holidays 2019! #GoogleDoodle'
@@ -43,11 +46,11 @@ const generateMock = () => {
     comments: {}
   };
 
-  // dev
+  // !dev
   store.posts = Array(12)
     .fill(null)
     .map((_, i) => createPost(postMock(i)));
-  // dev
+  // !dev
 
   return {
     postsGetMock: withDelay(() => store.posts),
@@ -58,7 +61,7 @@ const generateMock = () => {
 
       const post = createPost(postDetails, userStore.name);
 
-      store.posts = [...store.posts, post];
+      store.posts = [post, ...store.posts];
 
       return store.posts;
     }
