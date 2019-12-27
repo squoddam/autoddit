@@ -1,6 +1,18 @@
 import uuidv1 from 'uuid/v1';
 import { select } from 'redux-saga/effects';
 
+// const log = (...args) => (
+//   console.log('SERVER: ', ...args), args[args.length - 1]
+// );
+
+const findBy = (mask, arr = []) => {
+  if (!mask) return null;
+
+  const byKeys = Object.keys(mask);
+
+  return arr.find(item => byKeys.every(key => item[key] === mask[key]));
+};
+
 const SECOND = 1000;
 const MINUTE = SECOND * 60;
 const HOUR = MINUTE * 60;
@@ -13,6 +25,7 @@ const createPost = (details, user) => ({
   createdAt: Date.now(),
   createdBy: user,
   commentsCount: 0,
+  directComments: [],
   score: 0,
   ...details
 });
@@ -54,10 +67,41 @@ const postMock = i =>
 
 const getWithSkip = (posts, skip = 0, get = 5) => posts.slice(skip, skip + get);
 
+const getChildrenOrder = (children, comments) => {
+  const getChildren = id => {
+    if (comments[id].children.length === 0) {
+      return id;
+    }
+
+    return [id, ...comments[id].children.flatMap(getChildren)];
+  };
+
+  return children.flatMap(getChildren);
+};
+
 const generateMock = () => {
   window.store = {
     posts: [],
-    comments: {}
+    commentsMap: {},
+    getPost(postId) {
+      return findBy(
+        {
+          id: postId
+        },
+        this.posts
+      );
+    },
+    getComments(postId) {
+      const post = this.getPost(postId);
+      const order = getChildrenOrder(
+        post.directComments,
+        this.commentsMap[postId]
+      );
+
+      return JSON.stringify(
+        order.map(commentId => this.commentsMap[postId][commentId])
+      );
+    }
   };
 
   // !dev
@@ -68,11 +112,16 @@ const generateMock = () => {
   window.store.posts.forEach(post => {
     post.commentsCount = 2;
 
-    const comment1 = createComment(post.id, null, 'adasdasdasd', 'querty');
+    const comment1 = createComment(
+      post.id,
+      null,
+      'Comment 1 content',
+      'querty'
+    );
     const comment2 = createComment(
       post.id,
       comment1.id,
-      'adasdasdasd',
+      'Comment 1 1 content',
       'querty'
     );
 
@@ -82,7 +131,12 @@ const generateMock = () => {
     comment2.depth = 1;
     comment2.createdAt = comment1.createdAt + HOUR;
 
-    window.store.comments[post.id] = [comment1, comment2];
+    window.store.commentsMap[post.id] = {
+      [comment1.id]: comment1,
+      [comment2.id]: comment2
+    };
+
+    post.directComments = [comment1.id];
   });
   // !dev
 
@@ -107,9 +161,7 @@ const generateMock = () => {
       yield delay();
 
       if (commentId) {
-        window.store.comments[postId].find(
-          c => c.id === commentId
-        ).score += change;
+        window.store.commentsMap[postId][commentId].score += change;
 
         return;
       }
@@ -130,34 +182,30 @@ const generateMock = () => {
         userStore.name
       );
 
-      window.store.posts.find(p => p.id === postId).commentsCount++;
+      const post = window.store.posts.find(p => p.id === postId);
+      post.commentsCount++;
 
-      if (!window.store.comments[postId]) {
-        window.store.comments[postId] = [comment];
+      if (!window.store.commentsMap[postId]) {
+        window.store.commentsMap[postId][comment.id] = comment;
+        post.directComments.push(comment.id);
       } else if (commentId) {
-        const parent = window.store.comments[postId].find(
-          c => c.id === commentId
-        );
-        parent.children.push(comment.id);
+        const parent = window.store.commentsMap[postId][commentId];
 
         comment.depth = parent.depth + 1;
 
-        const lastInThreadId = parent.children[parent.children.length - 1];
-        const indexToPlace = window.store.comments[postId].findIndex(
-          c => c.id === lastInThreadId
-        );
-
-        window.store.comments[postId].splice(indexToPlace, 0, comment);
+        parent.children.push(comment.id);
+        window.store.commentsMap[postId][comment.id] = comment;
       } else {
-        window.store.comments[postId].push(comment);
+        window.store.commentsMap[postId][comment.id] = comment;
+        post.directComments.push(comment.id);
       }
 
-      return JSON.stringify(window.store.comments[postId]);
+      return window.store.getComments(postId);
     },
     postsCommentGet: function*(postId) {
       yield delay();
 
-      return JSON.stringify(window.store.comments[postId]);
+      return window.store.getComments(postId);
     }
   };
 };

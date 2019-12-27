@@ -67,7 +67,7 @@ const Feed = () => {
 
         return [...state, postId];
       }),
-    []
+    [dispatch, postsStore.data.comments]
   );
 
   const handleAddComment = useCallback(
